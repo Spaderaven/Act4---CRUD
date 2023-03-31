@@ -8,7 +8,8 @@ let con = mysql.createConnection({
 });
 
 class user {
-    constructor(FirstN, SurN, Phone, Email, HomeAddressFK = null, ShippingAddressFK = null){
+    constructor(Title, FirstN, SurN, Phone, Email, HomeAddressFK = null, ShippingAddressFK = null){
+        this.Title = Title;
         this.FirstN = FirstN;
         this.SurN = SurN;
         this.Phone = Phone;
@@ -57,6 +58,7 @@ function RunQuery(sql, callback) {
 // CreateUser();
 
 let newUser = new user();
+newUser.Title = "Mr"
 newUser.FirstN = "NEWERMiguel";
 newUser.SurN = "asdasd",
 newUser.Phone = "3213150",
@@ -70,13 +72,13 @@ let shippingAddress = new Address("321 Fake Street", null, "My Town", "My County
 function CreateUser(newUser, callback) {
 
     
-    let createSql = `INSERT INTO USERS(FirstN, SurN, Phone, Email, HomeAddressFK, ShippingAddressFK) Values ('${newUser.FirstN}', '${newUser.SurN}', '${newUser.Phone}', '${newUser.Email}', '${newUser.HomeAddressFK}', '${newUser.ShippingAddressFK}')`;
+    let createSql = `INSERT INTO USERS(Title, FirstN, SurN, Phone, Email, HomeAddressFK, ShippingAddressFK) Values ('${newUser.Title}', '${newUser.FirstN}', '${newUser.SurN}', '${newUser.Phone}', '${newUser.Email}', '${newUser.HomeAddressFK}', '${newUser.ShippingAddressFK}')`;
 
     // let { err, res } = RunQuery(createSql);
 
     let selectSQL = 'Select * From USERS'
 
-    con.query(createSql, function(err, result, fiedls) {
+    con.query(createSql, (err, result, fiedls) => {
         if (err) throw err;
     
         console.log("THE RESUTL Q", result);
@@ -97,7 +99,7 @@ function CreateHomeAddress(newAddress, callback ) {
 
     let createSql = `INSERT INTO HomeAddress(Line1, Line2, Town, County, Eircode) Values ('${newAddress.Line1}', '${newAddress.Line2}', '${newAddress.Town}', '${newAddress.County}', '${newAddress.Eircode}')`;
 
-    con.query(createSql, function(err, result, fiedls) {
+    con.query(createSql, (err, result, fiedls) => {
         if (err) throw err;
     
         console.log("THE RESUTL Q", result);
@@ -116,7 +118,7 @@ function CreateShippingAddress(newAddress, callback) {
 
     let createSql = `INSERT INTO ShippingAddress(Line1, Line2, Town, County, Eircode) Values ('${newAddress.Line1}', '${newAddress.Line2}', '${newAddress.Town}', '${newAddress.County}', '${newAddress.Eircode}')`;
 
-    con.query(createSql, function(err, result, fiedls) {
+    con.query(createSql, (err, result, fiedls) => {
         if (err) throw err;
     
         // console.log("THE RESUTL Q", result);
@@ -201,7 +203,7 @@ newUser.ShippingAddressFK = 7;
 function UpdateUserByID(id, user, callback) {
 
     let sql = `UPDATE USERS
-    SET FirstN = '${user.FirstN}', SurN = '${user.SurN}', Phone = '${user.Phone}', Email = '${user.Email}'
+    SET Title = '${user.Title}', Phone = '${user.Phone}', Email = '${user.Email}'
     WHERE PK = ${id};`
 
     con.query(sql, (err, res) => {
@@ -213,6 +215,39 @@ function UpdateUserByID(id, user, callback) {
         return callback(err, res)
     })
 }
+
+function UpdateHomeAddressByID(id, address, callback) {
+
+    let sql = `UPDATE HomeAddress
+    SET Line1 = '${address.Line1}', Line2 = '${newAddress.Line2}', Town = '${newAddress.Town}', County = '${newAddress.County}', Eircode = '${newAddress.Eircode}'
+    WHERE PK = ${id};`
+
+    con.query(sql, (err, res) => {
+
+        if(err) throw err;
+
+        console.log("UPDATE", res);
+
+        return callback(err, res)
+    })
+}
+
+function UpdateShippingAddressByID(id, address, callback) {
+
+    let sql = `UPDATE ShippingAddress
+    SET Line1 = '${address.Line1}', Line2 = '${newAddress.Line2}', Town = '${newAddress.Town}', County = '${newAddress.County}', Eircode = '${newAddress.Eircode}'
+    WHERE PK = ${id};`
+
+    con.query(sql, (err, res) => {
+
+        if(err) throw err;
+
+        console.log("UPDATE", res);
+
+        return callback(err, res)
+    })
+}
+
 
 DeleteUser(newUser, () => {});
 
