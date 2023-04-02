@@ -194,7 +194,7 @@ function GetAllUserAndAdresses(callback) {
 // GetUserAndAdressesByName("Miguel", () => {})
 
 function GetUserAndAdressesByName(name, callback) {
-    let selectSQL = `SELECT * FROM USERS, HomeAddress, ShippingAddress WHERE USERS.HomeAddressFK = HomeAddress.PK AND ShippingAddress.PK = USERS.ShippingAddressFK AND USERS.FirstN = '${name}'`;
+    let selectSQL = `SELECT * FROM USERS, HomeAddress, ShippingAddress WHERE USERS.HomeAddressFK = HomeAddress.PK AND ShippingAddress.PK = USERS.ShippingAddressFK AND USERS.FirstN = '${name.FirstN}' AND USERS.SurN = '${name.SurN}'`;
     let options = {sql: selectSQL, nestTables: true};
 
     con.query(options, (err, res) => {
@@ -372,50 +372,103 @@ function TrasformToDataBaseObj(postData) {
 }
 
 
+function TestScript() {
 
+    let newUser = new user();
+    newUser.Title = "Mr"
+    newUser.FirstN = "Tester";
+    newUser.SurN = "Script",
+    newUser.Phone = "1234567890",
+    newUser.Email = "Test@gmail.com"
 
-// GetUserAndAdressesByID(3, () => {});
+    newHomeAddress = new Address("123 Test Home", "", "Test Home", "Test Home County", "152AN");
+    newShippingAddress = new Address("123 Test Ship", "", "Test Ship", "Test Ship County", "152AN");
 
-/* function GetUserAndAdressesByID(id, callback) {
+    console.log("Creating Following user:");
+    console.log("User:", newUser);
+    console.log("Home Address:0", newHomeAddress);
+    console.log("Shipping Address:", newShippingAddress);
 
-    let selectSQL = 'Select * From USERS, HomeAddress, ShippingAddress WHERE USERS.PK = 2 AND USERS.HomeAddressFK = HomeAddress.PK AND USERS.ShippingAddressFK = ShippingAddress.PK';
-    selectSQL = 'SELECT * FROM USERS, HomeAddress, ShippingAddress WHERE USERS.HomeAddressFK = HomeAddress.PK AND ShippingAddress.PK = USERS.ShippingAddressFK AND USERS.PK = 3;';
-    selectSQL = 'SELECT * FROM USERS, HomeAddress, ShippingAddress WHERE USERS.HomeAddressFK = HomeAddress.PK AND ShippingAddress.PK = USERS.ShippingAddressFK AND USERS.PK = 3;';
+    CreateUserWithAddresses(newUser, newHomeAddress, newShippingAddress, (err, res) => {
 
-    let select = `SELECT * FROM USERS WHERE PK = ${id}`;
-
-    let data = {};
-
-    con.query(select, function(err, result, fiedls) {
         if (err) throw err;
 
-        data.user = result[0];
+        let testPK = res.insertId
 
-        select = `SELECT * FROM HomeAddress WHERE PK = ${data.user.HomeAddressFK}`;
-
-        con.query(select, function(err, result, fiedls) {
+        GetAllUserAndAdresses((err, res) => {
             if (err) throw err;
-        
-            data.homeAddress = result[0];
 
-            select = `SELECT * FROM ShippingAddress WHERE PK = ${data.user.ShippingAddressFK}`;
+            console.log("ALL USERS, NEW USER IS LAST");
+            console.log(res);
 
-            con.query(select, function(err, result, fiedls) {
+            let retrieveName = {
+                FirstN: "Tester",
+                SurN: "Script"
+            }
+
+            GetUserAndAdressesByName(retrieveName, (err, res) => {
                 if (err) throw err;
-            
-                data.shippingAddress = result[0];
 
-                console.log("DATA; ", data);
+                console.log("Person with Name: ", retrieveName.FirstN, "  ", retrieveName.SurN);
+                console.log(res);
+
+                newUser.Title = "Ms"
+                newUser.FirstN = "Tester";
+                newUser.SurN = "Script",
+                newUser.Phone = "999999999",
+                newUser.Email = "UpdatedTest@gmail.com"
+
+                UpdateUserByID(testPK, newUser, (err, res) => {
+                    if (err) throw err;
+
+                    console.log("UPDATED USER Title, Phone, Email");
+
+                    updateHomeAddress = new Address("123 UPDATE Home", "", "UPDATE Home", "UPDATE Home County", "152AN");
+
+                    GetUserAndAdressesByID(testPK, (err, res) => {
+                        if (err) throw err;
+
+                        UpdateShippingAddressByID(res[0].PK, updateHomeAddress, (err, res) => {
+                            if (err) throw err;
+
+                            console.log("UPDATED HOME ADDRESS");
+
+                            GetUserAndAdressesByID(testPK, (err, res) => {
+                                if (err) throw err;
         
-                return callback(err, data);
+                                console.log(res);
+
+                                DeleteUserByNameEmailPhone(newUser, (err, res) => {
+
+                                    if (err) throw err;
+
+                                    console.log("TEST USER HAS BEEN DELETED");
+
+                                    GetAllUserAndAdresses((err, res) => {
+                                        if (err) throw err;
+
+                                        console.log(res);
+
+                                    })
+
+                                })
+
+                            })
+
+                        })
+
+                    })
+ 
+
+                })
+
             })
 
-        })
+        });
 
-    })
-    
-} */
+    });
 
+}
 
 http.createServer(function (req, res) {
 
@@ -445,9 +498,6 @@ http.createServer(function (req, res) {
 
         req.on('data', function (POSTdata) {
             body += POSTdata;
-
-            // Too much POST POSTdata, kill the connection!
-            // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
             if (body.length > 1e6)
                 req.connection.destroy();
         });
@@ -502,7 +552,7 @@ http.createServer(function (req, res) {
                 </tr>`
             });
 
-            console.log(html);
+            // console.log(html);
     
     
             res.end(html);

@@ -36,11 +36,8 @@
 
             })
             
-            $("#submitButton").click( () => {
-                let formData = {
-                    name: "hMaria",
-                    SurName: "La que no queria"
-                };
+            $("form").on("submit", function (e) {
+                e.preventDefault();
 
                 let newData = ($('form').serializeArray())
                 objectifyForm(newData);
@@ -82,7 +79,7 @@
 
     <style>
 form {
-  background-color: #f2f2f2;
+  background-color: lightgray;
   border-radius: 5px;
   padding: 20px;
   width: 80%;
@@ -92,7 +89,6 @@ form {
 label {
   display: inline-block;
   margin-bottom: 5px;
-  font-weight: bold;
 }
 
 input[type=text],
@@ -107,7 +103,7 @@ input[type=tel] {
 }
 
 input[type=submit] {
-  background-color: #4CAF50;
+  background-color: green;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -116,13 +112,9 @@ input[type=submit] {
   font-size: 16px;
 }
 
-input[type=submit]:hover {
-  background-color: #3e8e41;
-}
-
 input:focus {
   outline: none;
-  border: 2px solid #4CAF50;
+  border: 2px solid green;
 }
 
 table, th, td {
@@ -140,11 +132,6 @@ table, th, td {
 </head>
 <body>
 
-    <button id="searchButton">Search</button>
-    <div id="info">
-
-    </div>
-
     <form>
 
         <div class="column">
@@ -152,69 +139,67 @@ table, th, td {
             <h3 style="margin: 0%;">User</h3>
 
             <label for="Title" >Title:</label>
-            <input type="text" id="Title" name="Title" ><br><br>
+            <input type="text" id="Title" name="Title" required><br><br>
     
             <label for="name" >Name:</label>
-            <input type="text" id="name" name="FirstN" ><br><br>
+            <input type="text" id="name" name="FirstN" required><br><br>
           
             <label for="surname">Surname:</label>
-            <input type="text" id="surname" name="SurN" ><br><br>
+            <input type="text" id="surname" name="SurN" required><br><br>
           
             <label for="email">Email:</label>
-            <input type="email" id="email" name="Email" ><br><br>
+            <input type="email" id="email" name="Email" required><br><br>
           
             <label for="phone">Phone:</label>
-            <input type="tel" id="phone" name="Phone" pattern="[0-9]{10}" ><br><br><br><br>
+            <input type="tel" id="phone" name="Phone" pattern="[0-9]{10}" required><br><br><br><br>
+            
         </div>
 
         <div class="column">
             <h3 style="margin: 0%;">Home Address</h3>
     
             <label for="Line1" >Line1:</label>
-            <input type="text" id="Line1" name="Line1" ><br><br>
+            <input type="text" id="Line1" name="Line1" required><br><br>
             
             <label for="Line2" >Line2:</label>
             <input type="text" id="Line2" name="Line2" ><br><br>
             
             <label for="Town" >Town:</label>
-            <input type="text" id="Town" name="Town" ><br><br>
+            <input type="text" id="Town" name="Town" required><br><br>
             
             <label for="County" >County:</label>
-            <input type="text" id="County" name="County" ><br><br>
+            <input type="text" id="County" name="County" required><br><br>
             
             <label for="EirCode" >EirCode:</label>
-            <input type="text" id="EirCode" name="EirCode" ><br><br>
+            <input type="text" id="EirCode" name="EirCode" required><br><br>
         </div>
 
         <div class="column">
             <h3 style="margin: 0%;" >Shipping Address</h3>
     
             <label for="SLine1" >Line1:</label>
-            <input type="text" id="SLine1" name="SLine1" ><br><br>
+            <input type="text" id="SLine1" name="SLine1" required><br><br>
             
             <label for="SLine2" >Line2:</label>
             <input type="text" id="SLine2" name="SLine2" ><br><br>
             
             <label for="STown" >Town:</label>
-            <input type="text" id="STown" name="STown" ><br><br>
+            <input type="text" id="STown" name="STown" required><br><br>
             
             <label for="SCounty" >County:</label>
-            <input type="text" id="SCounty" name="SCounty" ><br><br>
+            <input type="text" id="SCounty" name="SCounty" required><br><br>
             
             <label for="SEirCode" >EirCode:</label>
-            <input type="text" id="SEirCode" name="SEirCode" ><br><br>
-        </div>
-        
-        <div>
-            <input id="submitButton" type="submit" value="Submit">
-        </div>
-        
-      
+            <input type="text" id="SEirCode" name="SEirCode" required><br><br>
+        </div>        
+
+        <input id="submitButton" type="submit" value="Submit">
+
       </form>
       
-      <h3>Data Base:</h3>
       <div  style="margin-top: 3em;" >
-          <table id="" style="border: 2px;">
+        <h3>Data Base:</h3>
+          <table style="border: 2px;">
             <tr>
               <th colspan="5">User</th>
               <th colspan="5">Home Address</th>
@@ -242,9 +227,6 @@ table, th, td {
             </tr>
 
             <tbody id="myTable">
-                <div >
-
-                </div>
 
             </tbody>
 
