@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Activity</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready( () => {
+
+            $.get("http://localhost:3000", (data) => {
+                    console.log("THAD ADA", data);
+                    // $("#tableDiv").appendTo(data)
+                    $('#myTable').html("");
+                    $('#myTable').html(data);
+                    // $('#myTable tr:last').after(data);
+                })
+
+            console.log("HELLJADIJFAIDFJ");
+
+            $("#searchButton").click(function() {
+
+                console.log("CLICK");
+
+                $.get("http://localhost:3000", (data) => {
+                    console.log("THAD ADA", data);
+                    // $("#tableDiv").appendTo(data)
+                    $('#myTable').html("");
+                    $('#myTable').html(data);
+                    // $('#myTable tr:last').after(data);
+                })
+
+            })
+            
+            $("#submitButton").click( () => {
+                let formData = {
+                    name: "hMaria",
+                    SurName: "La que no queria"
+                };
+
+                let newData = ($('form').serializeArray())
+                objectifyForm(newData);
+                console.log(newData);
+
+                $.post("http://localhost:3000", newData, (data)=>{
+                    console.log("POSTINGAAAAA");
+                    console.log("NE DATA", data);
+
+                    $.get("http://localhost:3000", (data) => {
+                    
+                    console.log("GETTING DATA");
+
+                    console.log("THAD ADA", data);
+                    // $("#tableDiv").appendTo(data)
+                    $('#myTable').html("");
+                    $('#myTable').html(data);
+                    // $('#myTable tr:last').after(data);
+                })
+                })
+
+                return false;
+            })
+            
+            function objectifyForm(formArray) {
+                //serialize data function
+                var returnArray = {};
+                for (var i = 0; i < formArray.length; i++){
+                    returnArray[formArray[i]['name']] = formArray[i]['value'];
+                }
+                console.log("OBJED?", returnArray);
+                return returnArray;
+            }
+
+
+        })
+
+    </script>
+
+    <style>
+form {
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  padding: 20px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type=text],
+input[type=email],
+input[type=tel] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+input[type=submit]:hover {
+  background-color: #3e8e41;
+}
+
+input:focus {
+  outline: none;
+  border: 2px solid #4CAF50;
+}
+
+table, th, td {
+  border: 1px solid;
+}
+
+.column
+{
+    float: left;
+    width: 33%;
+}
+
+</style>
+
+</head>
+<body>
+
+    <button id="searchButton">Search</button>
+    <div id="info">
+
+    </div>
+
+    <form>
+
+        <div class="column">
+
+            <h3 style="margin: 0%;">User</h3>
+
+            <label for="Title" >Title:</label>
+            <input type="text" id="Title" name="Title" ><br><br>
+    
+            <label for="name" >Name:</label>
+            <input type="text" id="name" name="FirstN" ><br><br>
+          
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="SurN" ><br><br>
+          
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="Email" ><br><br>
+          
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="Phone" pattern="[0-9]{10}" ><br><br><br><br>
+        </div>
+
+        <div class="column">
+            <h3 style="margin: 0%;">Home Address</h3>
+    
+            <label for="Line1" >Line1:</label>
+            <input type="text" id="Line1" name="Line1" ><br><br>
+            
+            <label for="Line2" >Line2:</label>
+            <input type="text" id="Line2" name="Line2" ><br><br>
+            
+            <label for="Town" >Town:</label>
+            <input type="text" id="Town" name="Town" ><br><br>
+            
+            <label for="County" >County:</label>
+            <input type="text" id="County" name="County" ><br><br>
+            
+            <label for="EirCode" >EirCode:</label>
+            <input type="text" id="EirCode" name="EirCode" ><br><br>
+        </div>
+
+        <div class="column">
+            <h3 style="margin: 0%;" >Shipping Address</h3>
+    
+            <label for="SLine1" >Line1:</label>
+            <input type="text" id="SLine1" name="SLine1" ><br><br>
+            
+            <label for="SLine2" >Line2:</label>
+            <input type="text" id="SLine2" name="SLine2" ><br><br>
+            
+            <label for="STown" >Town:</label>
+            <input type="text" id="STown" name="STown" ><br><br>
+            
+            <label for="SCounty" >County:</label>
+            <input type="text" id="SCounty" name="SCounty" ><br><br>
+            
+            <label for="SEirCode" >EirCode:</label>
+            <input type="text" id="SEirCode" name="SEirCode" ><br><br>
+        </div>
+        
+        <div>
+            <input id="submitButton" type="submit" value="Submit">
+        </div>
+        
+      
+      </form>
+      
+      <h3>Data Base:</h3>
+      <div  style="margin-top: 3em;" >
+          <table id="" style="border: 2px;">
+            <tr>
+              <th colspan="5">User</th>
+              <th colspan="5">Home Address</th>
+              <th colspan="5">Shipping Address</th>
+            </tr>
+            <tr>
+              <th>Title</th>
+              <th>First Name</th>
+              <th>Surname</th>
+              <th>Phone</th>
+              <th>Email</th>
+    
+    
+              <th>Line 1</th>
+              <th>Line 2</th>
+              <th>Town</th>
+              <th>County</th>
+              <th>EirCode</th>
+    
+              <th>Line 1</th>
+              <th>Line 2</th>
+              <th>Town</th>
+              <th>County</th>
+              <th>EirCode</th>
+            </tr>
+
+            <tbody id="myTable">
+                <div >
+
+                </div>
+
+            </tbody>
+
+          </table>
+      </div>
+
+
+</body>
+</html>

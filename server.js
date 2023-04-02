@@ -1,4 +1,8 @@
 let mysql = require('mysql');
+var http = require('http');
+const { log } = require('console');
+var qs = require('querystring');
+
 
 let con = mysql.createConnection({
     host: "webcourse.cs.nuim.ie",
@@ -173,6 +177,20 @@ function GetUserAndAdressesByID(id, callback) {
     })
 }
 
+function GetAllUserAndAdresses(callback) {
+    let selectSQL = `SELECT * FROM USERS, HomeAddress, ShippingAddress WHERE USERS.HomeAddressFK = HomeAddress.PK AND ShippingAddress.PK = USERS.ShippingAddressFK`;
+    let options = {sql: selectSQL, nestTables: true};
+
+    con.query(options, (err, res) => {
+
+        if(err) throw err;
+
+        console.log("NEW WAYYY", res);
+
+        return callback(err, res)
+    })
+}
+
 // GetUserAndAdressesByName("Miguel", () => {})
 
 function GetUserAndAdressesByName(name, callback) {
@@ -194,9 +212,9 @@ newUser.FirstN = "Miguel";
 newUser.SurN = "Lustro",
 newUser.Phone = "123123",
 newUser.Email = "test@gmail.com"
-newUser.PK = 45;
-newUser.HomeAddressFK = 7;
-newUser.ShippingAddressFK = 7;
+newUser.PK = 44;
+newUser.HomeAddressFK = 6;
+newUser.ShippingAddressFK = 6;
 
 // UpdateUserByID(43, newUser, () => {} )
 
@@ -249,7 +267,7 @@ function UpdateShippingAddressByID(id, address, callback) {
 }
 
 
-DeleteUser(newUser, () => {});
+// DeleteUser(newUser, () => {});
 
 function DeleteUser(user, callback) {
 
@@ -287,7 +305,7 @@ function DeleteUser(user, callback) {
 
 
 
-DeleteUserByEmailPhoneName(newUser, () => {});
+// DeleteUserByNameEmailPhone(newUser, () => {});
 
 function DeleteUserByNameEmailPhone(user, callback) {
 
@@ -338,6 +356,22 @@ function DeleteUserByNameEmailPhone(user, callback) {
 }
 
 
+function TrasformToDataBaseObj(postData) {
+
+    let newUser = new user(postData.Title, postData.FirstN, postData.SurN, postData.Phone, postData.Email);
+    console.log(newUser);
+
+    let newHome = new Address(postData.Line1, postData.Line2, postData.Town, postData.County, postData.EirCode);
+    console.log(newHome);
+
+    let newShip = new Address(postData.SLine1, postData.SLine2, postData.STown, postData.SCounty, postData.SEirCode);
+    console.log(newShip);
+
+    return {newUser, newHome, newShip};
+
+}
+
+
 
 
 // GetUserAndAdressesByID(3, () => {});
@@ -383,5 +417,103 @@ function DeleteUserByNameEmailPhone(user, callback) {
 } */
 
 
+http.createServer(function (req, res) {
+
+    res.setHeader("Access-Control-Allow-Origin", "*");
+
+    log(req.url);
+    // res.writeHead(200, {'Content-Type': 'text/html'});
+    
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    );
+
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+
+    res.write(req.url);
+
+    console.log(req.method);
+
+    if(req.method == "POST") {
+        console.log("POST DATA", res);
+
+        var body = '';
+
+        req.on('data', function (POSTdata) {
+            body += POSTdata;
+
+            // Too much POST POSTdata, kill the connection!
+            // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+            if (body.length > 1e6)
+                req.connection.destroy();
+        });
+
+        req.on('end', function () {
+            var post = qs.parse(body);
+            console.log("POST DA,", post.FirstN);
+
+            let {newUser, newHome, newShip} = TrasformToDataBaseObj(post);
+
+            CreateUserWithAddresses(newUser, newHome, newShip, ((err, DBres) => {
+                if (err) throw err;
+
+                console.log("RESS", DBres);
+
+                res.end("DBres");
+            }))
+
+
+        });
+
+    }
+    else {  
+        GetAllUserAndAdresses((err, data) => {
+            if (err) throw err;
+            let results; 
+            // data.map(v => Object.assign({}, v));
+            console.log(data);
+    
+            let html = "";
+    
+            data.forEach(row => {
+                html += `
+                <tr>
+                <td>${row.USERS.Title}</td>
+                <td>${row.USERS.FirstN}</td>
+                <td>${row.USERS.SurN}</td>
+                <td>${row.USERS.Phone}</td>
+                <td>${row.USERS.Email}</td>
+
+                <td>${row.HomeAddress.Line1}</td>
+                <td>${row.HomeAddress.Line2}</td>
+                <td>${row.HomeAddress.Town}</td>
+                <td>${row.HomeAddress.County}</td>
+                <td>${row.HomeAddress.Eircode}</td>
+
+                <td>${row.ShippingAddress.Line1}</td>
+                <td>${row.ShippingAddress.Line2}</td>
+                <td>${row.ShippingAddress.Town}</td>
+                <td>${row.ShippingAddress.County}</td>
+                <td>${row.ShippingAddress.Eircode}</td>
+                </tr>`
+            });
+
+            console.log(html);
+    
+    
+            res.end(html);
+        })
+    }
+
+
+
+
+
+
+  }).listen(3000);
 
 // con.end();
