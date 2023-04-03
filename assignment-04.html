@@ -12,26 +12,18 @@
 
         $(document).ready( () => {
 
-            $.get("http://localhost:3000", (data) => {
-                    console.log("THAD ADA", data);
-                    // $("#tableDiv").appendTo(data)
+            $.get("http://localhost:3000", (data) => {                    
                     $('#myTable').html("");
                     $('#myTable').html(data);
-                    // $('#myTable tr:last').after(data);
                 })
-
-            console.log("HELLJADIJFAIDFJ");
+            
 
             $("#searchButton").click(function() {
+                
 
-                console.log("CLICK");
-
-                $.get("http://localhost:3000", (data) => {
-                    console.log("THAD ADA", data);
-                    // $("#tableDiv").appendTo(data)
+                $.get("http://localhost:3000", (data) => {                    
                     $('#myTable').html("");
                     $('#myTable').html(data);
-                    // $('#myTable tr:last').after(data);
                 })
 
             })
@@ -40,22 +32,15 @@
                 e.preventDefault();
 
                 let newData = ($('form').serializeArray())
-                objectifyForm(newData);
-                console.log(newData);
+                objectifyForm(newData);                
 
-                $.post("http://localhost:3000", newData, (data)=>{
-                    console.log("POSTINGAAAAA");
-                    console.log("NE DATA", data);
+                $.post("http://localhost:3000", newData, (data)=>{                                        
 
                     $.get("http://localhost:3000", (data) => {
+                                        
                     
-                    console.log("GETTING DATA");
-
-                    console.log("THAD ADA", data);
-                    // $("#tableDiv").appendTo(data)
                     $('#myTable').html("");
                     $('#myTable').html(data);
-                    // $('#myTable tr:last').after(data);
                 })
                 })
 
@@ -63,12 +48,10 @@
             })
             
             function objectifyForm(formArray) {
-                //serialize data function
                 var returnArray = {};
                 for (var i = 0; i < formArray.length; i++){
                     returnArray[formArray[i]['name']] = formArray[i]['value'];
-                }
-                console.log("OBJED?", returnArray);
+                }                
                 return returnArray;
             }
 
